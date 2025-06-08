@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
@@ -222,48 +221,6 @@
             font-size: 0.9rem;
         }
         
-        /* Loading Animation */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .loading-logo {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 2rem;
-            animation: pulse 1.5s infinite;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .header h1 {
@@ -285,15 +242,6 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">
-            <i class="fas fa-tv" style="font-size: 80px; color: white;"></i>
-        </div>
-        <div class="loading-spinner"></div>
-        <p style="color: white; margin-top: 1rem;">Inapakia...</p>
-    </div>
-
     <div class="container">
         <!-- Header Section -->
         <div class="header">
@@ -403,17 +351,6 @@
     </div>
 
     <script>
-        // Loading screen removal (3 seconds)
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loadingScreen');
-                loadingScreen.style.opacity = '0';
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 3000); // Reduced to 3 seconds
-        });
-        
         // Slideshow functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
