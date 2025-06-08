@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSN Streaming Channel - Premium Tanzanian TV Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e50914;
+            --dark: #141414;
+            --light: #f4f4f4;
+            --accent: #00a8ff;
+            --gray: #999;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        header.scrolled {
+            background-color: var(--dark);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 2.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        /* Hero Slider */
+        .hero-slider {
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            padding: 0 100px;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide-content {
+            max-width: 600px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 30px;
+            border-radius: 10px;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease 0.3s;
+        }
+        
+        .slide.active .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .slide h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .slide p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #f40612;
+            transform: translateY(-3px);
+        }
+        
+        .slider-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+        }
+        
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .slider-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        /* Channels Section */
+        .section-title {
+            font-size: 2rem;
+            margin: 50px 0 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            margin: 15px auto 0;
+        }
+        
+        .channels-container {
+            padding: 0 50px 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .channel-card {
+            background-color: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .channel-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        
+        .channel-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .channel-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+        
+        .channel-logo {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .channel-logo img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+        
+        .channel-info {
+            padding: 20px;
+        }
+        
+        .channel-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .channel-info p {
+            color: var(--gray);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .watch-btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .watch-btn:hover {
+            background-color: #f40612;
+        }
+        
+        /* Video Player Styles */
+        .video-player-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .video-player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .video-player-title {
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .close-player-btn {
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .video-player {
+            flex-grow: 1;
+            width: 100%;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 50px;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .social-links {
+            margin-bottom: 20px;
+        }
+        
+        .social-links a {
+            color: var(--light);
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            header {
+                padding: 20px;
+            }
+            
+            .slide {
+                padding: 0 50px;
+            }
+            
+            .channels-container {
+                padding: 0 20px 30px;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo i {
+                font-size: 2rem;
+            }
+            
+            nav ul li {
+                margin-left: 15px;
+            }
+            
+            .hero-slider {
+                height: 60vh;
+            }
+            
+            .slide {
+                padding: 0 30px;
+            }
+            
+            .slide h2 {
+                font-size: 2rem;
+            }
+            
+            .slide-content {
+                padding: 20px;
+            }
+            
+            .channels-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            nav ul {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            nav ul li {
+                margin-left: 0;
+            }
+            
+            .hero-slider {
+                height: 50vh;
+            }
+            
+            .slide {
+                padding: 0 20px;
+                justify-content: center;
+            }
+            
+            .slide-content {
+                text-align: center;
+                max-width: 100%;
+            }
+            
+            .slide h2 {
+                font-size: 1.8rem;
+            }
+            
+            .channels-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="logo">
+            <i class="fas fa-satellite-dish"></i>
+            <span>DSN STREAMING</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#channels">Channels</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-slider">
+        <div class="slide active" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+            <div class="slide-content">
+                <h2>Premium Tanzanian TV</h2>
+                <p>Experience the best of Tanzanian television with our high-quality streaming service. Watch your favorite channels anytime, anywhere.</p>
+                <a href="#channels" class="btn">View Channels</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1473&q=80');">
+            <div class="slide-content">
+                <h2>Crystal Clear Streaming</h2>
+                <p>Enjoy buffer-free HD streaming with our optimized servers. No lags, no interruptions, just seamless entertainment.</p>
+                <a href="#channels" class="btn">Start Watching</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+            <div class="slide-content">
+                <h2>All Channels in One Place</h2>
+                <p>From sports to movies, news to entertainment - we've got all your favorite Tanzanian channels in one convenient platform.</p>
+                <a href="#channels" class="btn">Explore Now</a>
+            </div>
+        </div>
+        <div class="slider-nav">
+            <div class="slider-dot active" data-slide="0"></div>
+            <div class="slider-dot" data-slide="1"></div>
+            <div class="slider-dot" data-slide="2"></div>
+        </div>
+    </section>
+
+    <section id="channels" class="channels-section">
+        <h2 class="section-title">Popular Channels</h2>
+        <div class="channels-container">
+            <!-- Channel 1 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1550645612-83f5d594b671?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-tv" style="color: #e50914; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>AZAM SPORTS ONE</h3>
+                    <p>The leading sports channel in Tanzania with premium local and international sports content.</p>
+                    <button class="watch-btn" data-stream="http://chaotic-streams.cc:80/play/live.php?mac=00:1A:79:BB:3B:18&stream=1118131&extension=ts" data-title="AZAM SPORTS ONE">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 2 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1461784180009-06ab4346f0c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-volleyball-ball" style="color: #00a8ff; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>AZAM SPORTS 2</h3>
+                    <p>Your second destination for sports entertainment with exclusive matches and analysis.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1118130&extension=ts&play_token=4OZoVsmE3C" data-title="AZAM SPORTS 2">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 3 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1605&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-basketball-ball" style="color: #ff9f43; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>AZAM SPORTS 3</h3>
+                    <p>More sports action with live coverage of various tournaments and sporting events.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1118129&extension=ts&play_token=HbqLopLewQ" data-title="AZAM SPORTS 3">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 4 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1543351611-58f69d7c1781?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-running" style="color: #2ecc71; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>AZAM SPORTS 4</h3>
+                    <p>Complete sports package with diverse content for all sports enthusiasts.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1688063&extension=ts&play_token=XiHu4B7pSc" data-title="AZAM SPORTS 4">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 5 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-film" style="color: #9b59b6; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>SINEMA ZETU</h3>
+                    <p>Premium local and international movies, series and entertainment content.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1118109&extension=ts&play_token=pefEEVIG6H" data-title="SINEMA ZETU">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 6 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1574267432553-4b4628081c31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1631&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-newspaper" style="color: #3498db; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>TBC 1</h3>
+                    <p>Tanzania's national broadcaster with news, current affairs and entertainment.</p>
+                    <button class="watch-btn" data-stream="http://live.vtv.co.tz/hls/m3u8/tbc1.m3u8" data-title="TBC 1">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 7 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-tv" style="color: #e74c3c; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>TBC 2</h3>
+                    <p>Alternative channel from TBC with diverse programming and content.</p>
+                    <button class="watch-btn" data-stream="http://live.vtv.co.tz/hls/m3u8/tbc2.m3u8" data-title="TBC 2">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 8 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-laugh-squint" style="color: #f1c40f; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>CHEKA PLUS</h3>
+                    <p>Comedy and entertainment channel to keep you laughing all day long.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1118114&extension=ts&play_token=srJlF0Trh1" data-title="CHEKA PLUS">Watch Now</button>
+                </div>
+            </div>
+            
+            <!-- Channel 9 -->
+            <div class="channel-card">
+                <div class="channel-image" style="background-image: url('https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1459&q=80');">
+                    <div class="channel-logo">
+                        <i class="fas fa-magic" style="color: #1abc9c; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <div class="channel-info">
+                    <h3>MAISHA MAGIC BONGO</h3>
+                    <p>Local entertainment with Tanzanian movies, series and reality shows.</p>
+                    <button class="watch-btn" data-stream="http://mag.premiumplus.tv:80/play/live.php?mac=00:1A:79:C2:CC:6C&stream=1741565&extension=ts&play_token=W4Ac2kOUwi" data-title="MAISHA MAGIC BONGO">Watch Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Player Container -->
+    <div class="video-player-container" id="videoPlayerContainer">
+        <div class="video-player-header">
+            <div class="video-player-title" id="videoPlayerTitle">Channel Name</div>
+            <button class="close-player-btn" id="closePlayerBtn">&times;</button>
+        </div>
+        <div class="video-player">
+            <video id="streamPlayer" width="100%" height="100%" controls autoplay playsinline>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            <i class="fas fa-satellite-dish"></i> DSN STREAMING
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="footer-links">
+            <a href="#">Home</a>
+            <a href="#channels">Channels</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+        <div class="copyright">
+            &copy; 2023 DSN Streaming Channel. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Slider functionality
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        // Auto slide change every 5 seconds
+        setInterval(nextSlide, 5000);
+        
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Video player functionality
+        const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+        const videoPlayerTitle = document.getElementById('videoPlayerTitle');
+        const closePlayerBtn = document.getElementById('closePlayerBtn');
+        const streamPlayer = document.getElementById('streamPlayer');
+        const watchButtons = document.querySelectorAll('.watch-btn');
+        
+        // Modified openPlayer function for AppCreator24 compatibility
+        function openPlayer(streamUrl, title) {
+            videoPlayerTitle.textContent = title;
+            videoPlayerContainer.style.display = 'flex';
+            
+            // Use HTML5 video element for direct playback
+            streamPlayer.src = streamUrl;
+            streamPlayer.load();
+            streamPlayer.play().catch(e => {
+                console.log("Autoplay prevented:", e);
+                // Show play button to user
+            });
+        }
+        
+        // Close player function
+        function closePlayer() {
+            videoPlayerContainer.style.display = 'none';
+            streamPlayer.pause();
+            streamPlayer.removeAttribute('src');
+        }
+        
+        // Set up event listeners
+        watchButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const streamUrl = button.getAttribute('data-stream');
+                const title = button.getAttribute('data-title');
+                openPlayer(streamUrl, title);
+            });
+        });
+        
+        closePlayerBtn.addEventListener('click', closePlayer);
+        
+        // Close player when clicking outside (but not on the video)
+        videoPlayerContainer.addEventListener('click', (e) => {
+            if (e.target === videoPlayerContainer) {
+                closePlayer();
+            }
+        });
+    </script>
+</body>
+</html>
